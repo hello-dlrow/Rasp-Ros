@@ -4,8 +4,8 @@ Process image frome camera
 Return deviation from mid line
 Return front vision length
 */
-
 #include "line_detect_node.hpp"
+#include "constans.h"
 
 #include <bits/stdint-uintn.h>
 #include <cv_bridge/cv_bridge.h>
@@ -14,15 +14,10 @@ Return front vision length
 #include <opencv2/opencv.hpp>
 #include <ros/ros.h>
 
-constexpr std::uint16_t height = 680;
-constexpr std::uint16_t width = 480;
-cv::Scalar lower_color_black(0, 0, 0);
-cv::Scalar higher_color_black(180, 255, 20);
-
 void Cam_RGB_Callback(const sensor_msgs::Image msg) {
 
   cv_bridge::CvImagePtr cv_ptr;
-  LineDetect detector(height, width, 1);
+  LineDetect detector(constants::height, constants::width, 1);
 
   try {
     cv_ptr = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::BGR8);
@@ -61,8 +56,8 @@ int main(int argc, char **argv) {
 LineDetect::LineDetect(const std::uint16_t &height, const std::uint16_t &width,
                        const std::uint8_t op)
     : height(height), width(width), op(op) {
-  lower_color = lower_color_black;
-  higher_color = higher_color_black;
+  lower_color = constants::lower_color_black;
+  higher_color = constants::higher_color_black;
 }
 // Leave empty
 LineDetect::~LineDetect(){};
