@@ -224,3 +224,4 @@ target_link_libraries(line_detect_node
     ${OpenCV_LIBRARIES}
     )
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
