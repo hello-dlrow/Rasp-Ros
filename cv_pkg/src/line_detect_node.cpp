@@ -35,7 +35,7 @@ void Cam_RGB_Callback(const sensor_msgs::Image msg) {
   cv::imshow("BGR", imgOriginal);
   cv::waitKey(1);
 
-  //将原始帧拷贝进巡线类中的私有成员
+  // 将原始帧拷贝进巡线类中的私有成员
   detector.image = imgOriginal.clone();
   detector.processImage();
   cv::imshow("Binary Image", detector.image);
@@ -48,9 +48,9 @@ int main(int argc, char **argv) {
 
   ros::Subscriber rgb_sub = nh.subscribe("camera/image", 1, Cam_RGB_Callback);
 
-  //显示原始图像
+  // 显示原始图像
   cv::namedWindow("BGR");
-  //显示二值化后的图像
+  // 显示二值化后的图像
   cv::namedWindow("Binary Image");
   ros::spin();
 
@@ -66,12 +66,12 @@ LineDetect::LineDetect(const std::uint16_t &height, const std::uint16_t &width,
 // Leave empty
 LineDetect::~LineDetect(){};
 
-//转换到符合人眼色彩空间的hsv
+// 转换到符合人眼色彩空间的hsv
 void LineDetect::cvtImg(cv::Mat &image) {
   cv::cvtColor(image, image, cv::COLOR_BGR2HSV);
 }
 
-//根据赛道颜色二值化图像
+// 根据赛道颜色二值化图像
 void LineDetect::binaryImg(cv::Mat &image) {
   cv::inRange(image, lower_color, higher_color, binary_mask);
   image = binary_mask;
@@ -84,25 +84,28 @@ std::vector<int> LineDetect::findBottomWhite(cv::Mat &image) {
   int bottomRow = rows - 1;
   int centerCol = cols / 2;
 
-  std::vector<int> result = {0, cols};
+  cv::Point leftPoint;
+  cv::Point rightPorint;
 
   for (int l = centerCol; l >= 0; --l) {
     if (image.at<uchar>(bottomRow, l) == 255) {
-      result[0] = l;
+      leftPoint.x = l;
+      leftPoint.y = bottomRow;
       break;
     }
   }
   for (int r = centerCol; r < cols; ++r) {
     if (image.at<uchar>(bottomRow, r) == 255) {
-      result[1] = r;
+      rightPorint.x = r;
+      rightPorint.y = bottomRow;
       break;
     }
   }
   return result;
 }
 
-//处理二值化图像，利用最长黑线法寻找赛道
-//这个函数负责寻找最长的黑线
+// 处理二值化图像，利用最长黑线法寻找赛道
+// 这个函数负责寻找最长的黑线
 void LineDetect::findMaxline(cv::Mat &image) {
   int rows = image.rows;
   int cols = image.cols;
@@ -150,7 +153,7 @@ void LineDetect::findMaxline(cv::Mat &image) {
             << " Right" << whitebottom[1] << std::endl;
 }
 
-//图像处理函数封装，提供一个公共接口
+// 图像处理函数封装，提供一个公共接口
 void LineDetect::processImage() {
   cvtImg(image);
   binaryImg(image);
